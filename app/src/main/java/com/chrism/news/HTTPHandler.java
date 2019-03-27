@@ -73,8 +73,11 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
     @Override
     protected void onPostExecute(NewsResponse res) {
-//        Log.d("MyTag", String.valueOf(res.getTotalResults()));
         articles = res.getArticles();
+        adapter = new NewsAdapter(articles);
+        recyclerView.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
+//        Log.d("MyTag", String.valueOf(adapter.getItemCount()));
         super.onPostExecute(res);
     }
 
@@ -88,8 +91,6 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
             layoutManager = new LinearLayoutManager(activity);
             recyclerView.setLayoutManager(layoutManager);
-
-            adapter = new NewsAdapter(articles);
         }
         super.onPreExecute();
     }

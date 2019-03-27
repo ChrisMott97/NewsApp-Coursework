@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        HTTPHandler httpHandler = new HTTPHandler();
-        httpHandler.execute(this);
+        HTTPHandler httpHandler = new HTTPHandler(this);
+        httpHandler.execute();
 
     }
 

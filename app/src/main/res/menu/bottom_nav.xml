@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/favs"
+        android:title="Favorites"
+        android:icon="@drawable/fav_icon"
+        app:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/browse"
+        android:title="Browse"
+        android:icon="@drawable/list_icon"
+        app:showAsAction="ifRoom|withText"/>
+    <item android:id="@+id/search"
+        android:title="Search"
+        android:icon="@drawable/search_icon"
+        app:showAsAction="ifRoom|withText"/>
+</menu>

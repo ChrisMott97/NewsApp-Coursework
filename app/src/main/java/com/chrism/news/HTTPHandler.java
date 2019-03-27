@@ -1,11 +1,11 @@
 package com.chrism.news;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -14,17 +14,14 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import okhttp3.Authenticator;
-import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.Route;
 
 public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
     private static final String api_key = "c97d71b1e50a454b8987b61269b52f30";
-    WeakReference<Activity> weakReference;
+    WeakReference<View> weakReference;
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -32,8 +29,8 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
     private List<Article> articles;
 
-    public HTTPHandler(Activity activity){
-        weakReference = new WeakReference<>(activity);
+    public HTTPHandler(View view){
+        weakReference = new WeakReference<>(view);
     }
 
     @Override
@@ -83,13 +80,13 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
     @Override
     protected void onPreExecute() {
-        Activity activity = weakReference.get();
-        if(activity != null){
-            recyclerView = activity.findViewById(R.id.my_recycler_view);
+        View view = weakReference.get();
+        if(view != null){
+            recyclerView = view.findViewById(R.id.my_recycler_view);
 
             recyclerView.setHasFixedSize(true);
 
-            layoutManager = new LinearLayoutManager(activity);
+            layoutManager = new LinearLayoutManager(view.getContext());
             recyclerView.setLayoutManager(layoutManager);
         }
         super.onPreExecute();

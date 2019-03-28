@@ -71,7 +71,7 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
     @Override
     protected void onPostExecute(NewsResponse res) {
         articles = res.getArticles();
-        adapter = new NewsAdapter(articles);
+        adapter = new NewsAdapter(articles, weakReference.get().getContext());
         recyclerView.setAdapter(adapter);
 //        adapter.notifyDataSetChanged();
 //        Log.d("MyTag", String.valueOf(adapter.getItemCount()));

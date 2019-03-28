@@ -1,16 +1,11 @@
 package com.chrism.news;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,16 +42,13 @@ public class BrowseFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
-        adapter.addFrag(new TopNewsFragment(), "TOPNEWS");
-        adapter.addFrag(new SportsFragment(), "SPORTS");
-//        adapter.addFrag(new ThreeFragment(), "THREE");
-//        adapter.addFrag(new FourFragment(), "FOUR");
-//        adapter.addFrag(new FiveFragment(), "FIVE");
-//        adapter.addFrag(new SixFragment(), "SIX");
-//        adapter.addFrag(new SevenFragment(), "SEVEN");
-//        adapter.addFrag(new EightFragment(), "EIGHT");
-//        adapter.addFrag(new NineFragment(), "NINE");
-//        adapter.addFrag(new TenFragment(), "TEN");
+        adapter.addFrag(new CategoryFragment(), "", "Top News");
+        adapter.addFrag(new CategoryFragment(), "technology", "Tech");
+        adapter.addFrag(new CategoryFragment(), "science", "Science");
+        adapter.addFrag(new CategoryFragment(), "entertainment", "Entertainment");
+        adapter.addFrag(new CategoryFragment(), "business", "Business");
+        adapter.addFrag(new CategoryFragment(), "health", "Health");
+        adapter.addFrag(new CategoryFragment(), "sports", "Sports");
         viewPager.setAdapter(adapter);
     }
 
@@ -78,7 +70,10 @@ public class BrowseFragment extends Fragment {
             return mFragmentList.size();
         }
 
-        public void addFrag(Fragment fragment, String title) {
+        public void addFrag(Fragment fragment, String category, String title) {
+            Bundle bundle = new Bundle();
+            bundle.putString("category", category);
+            fragment.setArguments(bundle);
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }

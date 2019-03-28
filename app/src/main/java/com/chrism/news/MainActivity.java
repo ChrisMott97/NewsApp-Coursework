@@ -3,10 +3,19 @@ package com.chrism.news;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import okhttp3.CacheControl;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,14 +32,11 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
-//        HTTPHandler httpHandler = new HTTPHandler(this);
-//        httpHandler.execute();
-
         BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
         bnv.setOnNavigationItemSelectedListener((item) -> {
             switch (item.getItemId()){
                 case R.id.favs:
-                    this.navigateTo(new FavFragment(), false);
+//                    this.navigateTo(new FavFragment(), false);
                     break;
                 case R.id.browse:
                     this.navigateTo(new BrowseFragment(), false);
@@ -56,5 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
         transaction.commit();
     }
+
+
+
+
 
 }

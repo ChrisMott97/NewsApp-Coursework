@@ -1,6 +1,9 @@
 package com.chrism.news;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +17,9 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import okhttp3.CacheControl;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -27,6 +33,8 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    private AppDatabase appDatabase;
+
     private List<Article> articles;
 
     public HTTPHandler(View view){
@@ -36,10 +44,25 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
     @Override
     protected NewsResponse doInBackground(String... params) {
         try{
-            String json = fetch();
+            String json = fetch(params);
             Moshi moshi = new Moshi.Builder().build();
             JsonAdapter<NewsResponse> jsonAdapter = moshi.adapter(NewsResponse.class);
-            return jsonAdapter.fromJson(json);
+            NewsResponse newsResponse = jsonAdapter.fromJson(json);
+
+            if(newsResponse != null){
+                appDatabase.articleDao().deleteAll();
+                for (Article article :
+                        newsResponse.getArticles()) {
+                    appDatabase.articleDao().insert(article);
+                }
+                Log.d("MyTag", appDatabase.articleDao().getAll().toString());
+                articles = newsResponse.getArticles();
+            }else{
+                articles = appDatabase.articleDao().getAll();
+            }
+
+
+            return newsResponse;
         }catch (IOException e){
             e.printStackTrace();
             return null;
@@ -48,7 +71,7 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
     }
 
-    private String fetch() throws IOException{
+    private String fetch(String... params) throws IOException{
         OkHttpClient client = new OkHttpClient.Builder().authenticator((route, response) -> {
             if (response.request().header("Authorization") != null)
                 return null; //already attempted auth;
@@ -59,8 +82,15 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
         }).build();
 
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://newsapi.org/v2/top-headlines?country=us").newBuilder();
+        try{
+            urlBuilder.addQueryParameter("category", params[0]);
+        }catch(Exception e){
+        }
+        String url = urlBuilder.build().toString();
+
         Request req = new Request.Builder()
-                .url("https://newsapi.org/v2/top-headlines?country=us")
+                .url(url)
                 .build();
 
         try(Response res = client.newCall(req).execute()){
@@ -70,12 +100,13 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
     @Override
     protected void onPostExecute(NewsResponse res) {
-        articles = res.getArticles();
-        adapter = new NewsAdapter(articles, weakReference.get().getContext());
-        recyclerView.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
-//        Log.d("MyTag", String.valueOf(adapter.getItemCount()));
-        super.onPostExecute(res);
+        if(articles != null){
+            adapter = new NewsAdapter(articles, weakReference.get().getContext());
+            recyclerView.setAdapter(adapter);
+    //        adapter.notifyDataSetChanged();
+    //        Log.d("MyTag", String.valueOf(adapter.getItemCount()));
+            super.onPostExecute(res);
+        }
     }
 
     @Override
@@ -88,6 +119,7 @@ public class HTTPHandler extends AsyncTask<String ,String, NewsResponse> {
 
             layoutManager = new LinearLayoutManager(view.getContext());
             recyclerView.setLayoutManager(layoutManager);
+            appDatabase = AppDatabase.getDatabase(view.getContext());
         }
         super.onPreExecute();
     }

@@ -1,16 +1,32 @@
 package com.chrism.news;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "article")
 public class Article {
+    @Ignore
     private Source source;
+    @Ignore
     private String author;
+    @ColumnInfo(name = "title")
     private String title;
+    @ColumnInfo(name = "desc")
     private String description;
+    @NonNull
+    @PrimaryKey
     private String url;
+    @Ignore
     private String urlToImage;
+    @Ignore
     private String publishedAt;
+    @Ignore
     private String content;
 
-    public Article(Source source, String author, String title, String description, String url, String urlToImage, String publishedAt, String content) {
+    public Article(Source source, String author, String title, String description, @NonNull String url, String urlToImage, String publishedAt, String content) {
         this.source = source;
         this.author = author;
         this.title = title;
@@ -19,6 +35,12 @@ public class Article {
         this.urlToImage = urlToImage;
         this.publishedAt = publishedAt;
         this.content = content;
+    }
+
+    public Article(String title, String description, @NonNull String url) {
+        this.title = title;
+        this.description = description;
+        this.url = url;
     }
 
     public Source getSource() {
@@ -53,6 +75,7 @@ public class Article {
         this.description = description;
     }
 
+    @NonNull
     public String getUrl() {
         return url;
     }
